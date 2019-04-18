@@ -9,6 +9,7 @@ from collections import Counter
 
 from utils import vocab, constant, helper
 
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Prepare vocab for relation extraction.')
     parser.add_argument('data_dir', help='TACRED directory.')
@@ -18,13 +19,14 @@ def parse_args():
     parser.add_argument('--wv_dim', type=int, default=300, help='GloVe vector dimension.')
     parser.add_argument('--min_freq', type=int, default=0, help='If > 0, use min_freq as the cutoff.')
     parser.add_argument('--lower', action='store_true', help='If specified, lowercase all words.')
-    
+
     args = parser.parse_args()
     return args
 
+
 def main():
     args = parse_args()
-    
+
     # input files
     train_file = args.data_dir + '/train.json'
     dev_file = args.data_dir + '/dev.json'
@@ -43,14 +45,14 @@ def main():
     dev_tokens = load_tokens(dev_file)
     test_tokens = load_tokens(test_file)
     if args.lower:
-        train_tokens, dev_tokens, test_tokens = [[t.lower() for t in tokens] for tokens in\
-                (train_tokens, dev_tokens, test_tokens)]
+        train_tokens, dev_tokens, test_tokens = [[t.lower() for t in tokens] for tokens in
+                                                 (train_tokens, dev_tokens, test_tokens)]
 
     # load glove
     print("loading glove...")
     glove_vocab = vocab.load_glove_vocab(wv_file, wv_dim)
     print("{} words loaded from glove.".format(len(glove_vocab)))
-    
+
     print("building vocab...")
     v = build_vocab(train_tokens, glove_vocab, args.min_freq)
 
@@ -58,8 +60,8 @@ def main():
     datasets = {'train': train_tokens, 'dev': dev_tokens, 'test': test_tokens}
     for dname, d in datasets.items():
         total, oov = count_oov(d, v)
-        print("{} oov: {}/{} ({:.2f}%)".format(dname, oov, total, oov*100.0/total))
-    
+        print("{} oov: {}/{} ({:.2f}%)".format(dname, oov, total, oov * 100.0 / total))
+
     print("building embeddings...")
     embedding = vocab.build_embedding(wv_file, v, wv_dim)
     print("embedding size: {} x {}".format(*embedding.shape))
@@ -70,6 +72,7 @@ def main():
     np.save(emb_file, embedding)
     print("all done.")
 
+
 def load_tokens(filename):
     with open(filename) as infile:
         data = json.load(infile)
@@ -78,6 +81,7 @@ def load_tokens(filename):
             tokens += d['token']
     print("{} tokens from {} examples loaded from {}.".format(len(tokens), len(data), filename))
     return tokens
+
 
 def build_vocab(tokens, glove_vocab, min_freq):
     """ build vocab from tokens and glove words. """
@@ -92,11 +96,13 @@ def build_vocab(tokens, glove_vocab, min_freq):
     print("vocab built with {}/{} words.".format(len(v), len(counter)))
     return v
 
+
 def count_oov(tokens, vocab):
     c = Counter(t for t in tokens)
     total = sum(c.values())
     matched = sum(c[t] for t in vocab)
-    return total, total-matched
+    return total, total - matched
+
 
 def entity_masks():
     """ Get all entity mask tokens as a list. """
@@ -107,7 +113,6 @@ def entity_masks():
     masks += ["OBJ-" + e for e in obj_entities]
     return masks
 
+
 if __name__ == '__main__':
     main()
-
-

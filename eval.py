@@ -7,8 +7,8 @@ import random
 import argparse
 import pickle
 import torch
-import torch.nn as nn
-import torch.optim as optim
+# import torch.nn as nn
+# import torch.optim as optim
 
 from data.loader import DataLoader
 from model.rnn import RelationModel
@@ -52,7 +52,7 @@ print("Loading data from {} with batch size {}...".format(data_file, opt['batch_
 batch = DataLoader(data_file, opt['batch_size'], opt, vocab, evaluation=True)
 
 helper.print_config(opt)
-id2label = dict([(v,k) for k,v in constant.LABEL_TO_ID.items()])
+id2label = dict([(v, k) for k, v in constant.LABEL_TO_ID.items()])
 
 predictions = []
 all_probs = []
@@ -71,4 +71,3 @@ if len(args.out) > 0:
     print("Prediction scores saved to {}.".format(args.out))
 
 print("Evaluation ended.")
-
