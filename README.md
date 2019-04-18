@@ -1,6 +1,6 @@
 Position-aware Attention RNN Model for Relation Extraction
 =========================
-This development branch is for code adaptation to use this model for [ACE](https://www.ldc.upenn.edu/collaborations/past-projects/ace) relation extraction dataset.
+**This development branch is for code adaptation to use this model for [ACE](https://www.ldc.upenn.edu/collaborations/past-projects/ace) relation extraction dataset.**
 
 
 This repo contains the *PyTorch* code for paper [Position-aware Attention and Supervised Data Improve Slot Filling](https://nlp.stanford.edu/pubs/zhang2017tacred.pdf).
@@ -28,25 +28,31 @@ If the ACE data does not meet the requirements of this model, use the following 
 chmod +x transform_ace_data.sh; ./transform_ace_data.sh
 ```
 
+The script supports two modes: 'stat' and 'write'.
+
+- stat mode: count the statistics of the dataset
+- write mode: transform the data and save as json file
+
+
 Then prepare vocabulary and initial word vectors with:
 ```
-python prepare_vocab.py dataset/ace dataset/vocab_ace --glove_dir dataset/glove
+python prepare_vocab.py dataset/ace05 dataset/vocab_ace05 --glove_dir dataset/glove
 ```
 
-This will write vocabulary and word vectors as a numpy matrix into the dir `dataset/vocab_ace`.
+This will write vocabulary and word vectors as a numpy matrix into the dir `dataset/vocab_ace05`.
 
 ## Training
 
 Train a position-aware attention RNN model with:
 ```
-python train.py --data_dir dataset/tacred --vocab_dir dataset/vocab_ace --id 00 --info "Position-aware attention model"
+python train.py --data_dir dataset/ace05 --vocab_dir dataset/vocab_ace05 --id 00 --save_dir ./saved_models_ace05 --info "Position-aware attention model"
 ```
 
 Use `--topn N` to finetune the top N word vectors only. The script will do the preprocessing automatically (word dropout, entity masking, etc.).
 
 Train an LSTM model with:
 ```
-python train.py --data_dir dataset/tacred --vocab_dir dataset/vocab_ace --no-attn --id 01 --info "LSTM model"
+python train.py --data_dir dataset/ace05 --vocab_dir dataset/vocab_ace05 --no-attn --id 01 --save_dir ./saved_models_ace05 --info "LSTM model"
 ```
 
 Model checkpoints and logs will be saved to `./saved_models/00`.
