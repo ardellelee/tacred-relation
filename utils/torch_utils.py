@@ -3,13 +3,15 @@ Utility functions for torch.
 """
 
 import torch
-from torch import nn, optim
+# from torch import nn, optim
 from torch.optim import Optimizer
 
-### class
+# class
+
+
 class MyAdagrad(Optimizer):
     """My modification of the Adagrad optimizer that allows to specify an initial
-    accumulater value. This mimics the behavior of the default Adagrad implementation 
+    accumulater value. This mimics the behavior of the default Adagrad implementation
     in Tensorflow. The default PyTorch Adagrad uses 0 for initial acculmulator value.
 
     Arguments:
@@ -22,8 +24,8 @@ class MyAdagrad(Optimizer):
     """
 
     def __init__(self, params, lr=1e-2, lr_decay=0, init_accu_value=0.1, weight_decay=0):
-        defaults = dict(lr=lr, lr_decay=lr_decay, init_accu_value=init_accu_value, \
-                weight_decay=weight_decay)
+        defaults = dict(lr=lr, lr_decay=lr_decay, init_accu_value=init_accu_value,
+                        weight_decay=weight_decay)
         super(MyAdagrad, self).__init__(params, defaults)
 
         for group in self.param_groups:
@@ -31,7 +33,7 @@ class MyAdagrad(Optimizer):
                 state = self.state[p]
                 state['step'] = 0
                 state['sum'] = torch.ones(p.data.size()).type_as(p.data) *\
-                        init_accu_value
+                    init_accu_value
 
     def share_memory(self):
         for group in self.param_groups:
@@ -89,7 +91,9 @@ class MyAdagrad(Optimizer):
 
         return loss
 
-### torch specific functions
+# torch specific functions
+
+
 def get_optimizer(name, parameters, lr):
     if name == 'sgd':
         return torch.optim.SGD(parameters, lr=lr)
@@ -97,15 +101,17 @@ def get_optimizer(name, parameters, lr):
         # use my own adagrad to allow for init accumulator value
         return MyAdagrad(parameters, lr=lr, init_accu_value=0.1)
     elif name == 'adam':
-        return torch.optim.Adam(parameters, betas=(0.9, 0.99)) # use default lr
+        return torch.optim.Adam(parameters, betas=(0.9, 0.99))  # use default lr
     elif name == 'adamax':
-        return torch.optim.Adamax(parameters) # use default lr
+        return torch.optim.Adamax(parameters)  # use default lr
     else:
         raise Exception("Unsupported optimizer: {}".format(name))
+
 
 def change_lr(optimizer, new_lr):
     for param_group in optimizer.param_groups:
         param_group['lr'] = new_lr
+
 
 def flatten_indices(seq_lens, width):
     flat = []
@@ -114,10 +120,12 @@ def flatten_indices(seq_lens, width):
             flat.append(i * width + j)
     return flat
 
+
 def set_cuda(var, cuda):
     if cuda:
         return var.cuda()
     return var
+
 
 def keep_partial_grad(grad, topk):
     """
@@ -127,7 +135,9 @@ def keep_partial_grad(grad, topk):
     grad.data[topk:].zero_()
     return grad
 
-### model IO
+# model IO
+
+
 def save(model, optimizer, opt, filename):
     params = {
         'model': model.state_dict(),
@@ -138,6 +148,7 @@ def save(model, optimizer, opt, filename):
         torch.save(params, filename)
     except BaseException:
         print("[ Warning: model saving failed. ]")
+
 
 def load(model, optimizer, filename):
     try:
@@ -151,10 +162,10 @@ def load(model, optimizer, filename):
     opt = dump['config']
     return model, optimizer, opt
 
+
 def load_config(filename):
     try:
         dump = torch.load(filename)
     except BaseException:
         print("[ Fail: model loading failed. ]")
     return dump['config']
-
