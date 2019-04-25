@@ -29,9 +29,9 @@ POS_TO_ID = {PAD_TOKEN: 0, UNK_TOKEN: 1, 'NNP': 2, 'NN': 3, 'IN': 4, 'DT': 5, ',
 
 DEPREL_TO_ID = {PAD_TOKEN: 0, UNK_TOKEN: 1, 'punct': 2, 'compound': 3, 'case': 4, 'nmod': 5, 'det': 6, 'nsubj': 7, 'amod': 8, 'conj': 9, 'dobj': 10, 'ROOT': 11, 'cc': 12, 'nmod:poss': 13, 'mark': 14, 'advmod': 15, 'appos': 16, 'nummod': 17, 'dep': 18, 'ccomp': 19, 'aux': 20, 'advcl': 21, 'acl:relcl': 22, 'xcomp': 23, 'cop': 24, 'acl': 25, 'auxpass': 26, 'nsubjpass': 27, 'nmod:tmod': 28, 'neg': 29, 'compound:prt': 30, 'mwe': 31, 'parataxis': 32, 'root': 33, 'nmod:npmod': 34, 'expl': 35, 'csubj': 36, 'cc:preconj': 37, 'iobj': 38, 'det:predet': 39, 'discourse': 40, 'csubjpass': 41}
 
-LABEL_TO_ID = {'no_relation': 0, 'ART': 1, 'GEN-AFF': 2, 'ORG-AFF': 3, 'PART-WHOLE': 4, 'PER-SOC': 5, 'PHYS': 6}
+# LABEL_TO_ID = {'no_relation': 0, 'ART': 1, 'GEN-AFF': 2, 'ORG-AFF': 3, 'PART-WHOLE': 4, 'PER-SOC': 5, 'PHYS': 6}  # ace03
+LABEL_TO_ID = {'no_relation': 0, 'AT': 1, 'NEAR': 2, 'PART': 3, 'ROLE': 4, 'SOC': 5}  # ace03
 
-SUB_LABEL_TO_ID = {'no_relation': 0, 'Artifact': 1, 'Business': 2, 'Citizen-Resident-Religion-Ethnicity': 3, 'Employment': 4, 'Family': 5, 'Founder': 6, 'Geographical': 7, 'Investor-Shareholder': 19, 'Lasting-Personal': 8, 'Located': 9, 'Membership': 10, 'Near': 11, 'Org-Location': 12, 'Ownership': 13, 'Sports-Affiliation': 14, 'Student-Alum': 15, 'Subsidiary': 16, 'User-Owner-Inventor-Manufacturer': 17, 'no_relation': 18}
-
+SUB_LABEL_TO_ID = {'no_relation': 0, 'Artifact': 1, 'Business': 2, 'Citizen-Resident-Religion-Ethnicity': 3, 'Employment': 4, 'Family': 5, 'Founder': 6, 'Geographical': 7, 'Investor-Shareholder': 19, 'Lasting-Personal': 8, 'Located': 9, 'Membership': 10, 'Near': 11, 'Org-Location': 12, 'Ownership': 13, 'Sports-Affiliation': 14, 'Student-Alum': 15, 'Subsidiary': 16, 'User-Owner-Inventor-Manufacturer': 17}
 
 INFINITY_NUMBER = 1e12

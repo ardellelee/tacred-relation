@@ -7,6 +7,7 @@ import random
 import argparse
 import pickle
 import torch
+import sys
 import torch.nn as nn
 import torch.optim as optim
 
@@ -57,9 +58,12 @@ id2label = dict([(v,k) for k,v in constant.LABEL_TO_ID.items()])
 predictions = []
 all_probs = []
 for i, b in enumerate(batch):
-    preds, probs, _ = model.predict(b)
-    predictions += preds
-    all_probs += probs
+    try:
+        preds, probs, _ = model.predict(b)
+        predictions += preds
+        all_probs += probs
+    except Exception:
+        print('@ly', i)
 predictions = [id2label[p] for p in predictions]
 p, r, f1 = scorer.score(batch.gold(), predictions, verbose=True)
 

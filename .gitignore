@@ -8,6 +8,7 @@ __pycache__/
 
 saved_models/
 saved_models_ace05/
+saved_models*
 dataset/
 log/
 paper/

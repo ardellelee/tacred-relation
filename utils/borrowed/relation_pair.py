@@ -1,4 +1,4 @@
-__all__ = ['RelationPairGeneratorTransformer']
+__all__ = ['RelationPairGeneratorTransformer', 'RelationPairGeneratorTransformer03']
 
 '''
 This file is borrowed from relation-extraction project, location: i2r/relation_extraction/transformers/relation_pair.py.
@@ -161,8 +161,8 @@ class RelationPairGeneratorTransformer(BaseEstimator, TransformerMixin):
 
 class RelationPairGeneratorTransformer03(BaseEstimator, TransformerMixin):
 
-    def __init__(self, ordered=True, symmetric=False, gold_only=False, none_label='None', tolerance=2, downsampling=False, ratio=1, **kwags):
-        # super().__init__(**kwargs)
+    def __init__(self, ordered=True, symmetric=True, gold_only=False, none_label='no_relation', tolerance=3, downsampling=False, ratio=1, **kwargs):
+        super().__init__(**kwargs)
         self.ordered = ordered
         self.symmetric = symmetric
         self.gold_only = gold_only
@@ -171,7 +171,7 @@ class RelationPairGeneratorTransformer03(BaseEstimator, TransformerMixin):
         self.downsampling = downsampling
         self.ratio = ratio
         self.symmetric_list = ['RELATIVE-LOCATION', 'ASSOCIATE', 'OTHER-RELATIVE', 'OTHER-PROFESSIONAL', 'SIBLING', 'SPOUSE']
-        print('gold_only={}, tolerance={}, downsampling={}, ratio={}'.format(self.gold_only, self.tolerance, self.downsampling, self.ratio))
+        # print('gold_only={}, tolerance={}, downsampling={}, ratio={}'.format(self.gold_only, self.tolerance, self.downsampling, self.ratio))
     # end def
 
     def fit(self, instances):
@@ -249,6 +249,7 @@ class RelationPairGeneratorTransformer03(BaseEstimator, TransformerMixin):
             d['paired_mentions'] = dict(m1=m1, m2=m2)
             d['relation'] = relation['type'] if relation else self.none_label
             d['subrelation'] = relation['subtype'] if relation else self.none_label
+            d['id'] = relation['id'] if relation else ''        # add relation id for TACRED code
             yield d
     # end def
 
@@ -269,12 +270,9 @@ class RelationPairGeneratorTransformer03(BaseEstimator, TransformerMixin):
 
     def findRelationsInDocument(self, doc=None):
         docid = doc.get('docid', '')
-        source = doc.get('source', '')
-        # content = doc.get('content', '')
         mentions = doc.get('mentions', [])
         relations = self.filterImplicitRelations(doc.get('relations', []))
         corenlp_annotations = doc.get('corenlp_annotations', [])
-        spacy_annotations = doc.get('nlp', [])
         sentences = corenlp_annotations.get('sentences', [])
         sentSplitPoints = [0] + [sent['tokens'][-1]['characterOffsetEnd'] for sent in sentences]
 
@@ -289,8 +287,6 @@ class RelationPairGeneratorTransformer03(BaseEstimator, TransformerMixin):
                 # print('_relation_instances:', len(_relation_instances))
                 for d in _relation_instances:
                     d.update({'corenlp_annotations': corenlp_annotations})
-                    d.update({'nlp': spacy_annotations})
-                    d.update({'source': source})
                     d.update({'docid': docid})
                 # end for
                 relation_instances.extend(_relation_instances)

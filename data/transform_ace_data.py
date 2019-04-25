@@ -11,6 +11,7 @@ import json
 from argparse import ArgumentParser, FileType
 from utils.borrowed.spans import find_token_span
 from utils.borrowed.relation_pair import RelationPairGeneratorTransformer
+from utils.borrowed.relation_pair import RelationPairGeneratorTransformer03
 
 parser = ArgumentParser()
 parser.add_argument('--input', type=FileType('r'), help='Input ace-style json data')
@@ -69,7 +70,8 @@ def main():
   ace_docs = [json.loads(line) for line in args.input]
   print('%d docments in %s' % (len(ace_docs), args.input.name))
 
-  relation_instances = RelationPairGeneratorTransformer(ordered=True).transform(ace_docs)     # args are using the default
+  # relation_instances = RelationPairGeneratorTransformer(ordered=True).transform(ace_docs)     # args are using the default
+  relation_instances = RelationPairGeneratorTransformer03(ordered=True).transform(ace_docs)     # args are using the default
   print('%d relation instances generated.' % len(relation_instances))
 
   n_error = 0
