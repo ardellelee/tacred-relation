@@ -67,9 +67,6 @@ elif args.cuda:
 opt = vars(args)
 opt['num_class'] = len(constant.LABEL_TO_ID)
 
-# print(opt)
-# sys.exit()
-
 # load vocab
 vocab_file = opt['vocab_dir'] + '/vocab.pkl'
 vocab = Vocab(vocab_file, load=True)
@@ -83,6 +80,8 @@ assert emb_matrix.shape[1] == opt['emb_dim']
 print("Loading data from {} with batch size {}...".format(opt['data_dir'], opt['batch_size']))
 train_batch = DataLoader(opt['data_dir'] + '/train.json', opt['batch_size'], opt, vocab, evaluation=False)
 dev_batch = DataLoader(opt['data_dir'] + '/dev.json', opt['batch_size'], opt, vocab, evaluation=True)
+# print('@ly len(train_batch[0])=', len(train_batch[0]))
+
 
 model_id = opt['id'] if len(opt['id']) > 1 else '0' + opt['id']
 model_save_dir = opt['save_dir'] + '/' + model_id
@@ -115,12 +114,21 @@ for epoch in range(1, opt['num_epoch'] + 1):
     for i, batch in enumerate(train_batch):
         start_time = time.time()
         global_step += 1
-        loss = model.update(batch)
-        train_loss += loss
-        if global_step % opt['log_step'] == 0:
-            duration = time.time() - start_time
-            print(format_str.format(datetime.now(), global_step, max_steps, epoch,
-                                    opt['num_epoch'], loss, duration, current_lr))
+
+        # if i==76:
+        #     bbb = batch
+        # if i==77:
+        #     aaa = batch
+        try:
+            loss = model.update(batch)
+            train_loss += loss
+            if global_step % opt['log_step'] == 0:
+                duration = time.time() - start_time
+                print(format_str.format(datetime.now(), global_step, max_steps, epoch,
+                                        opt['num_epoch'], loss, duration, current_lr))
+        except Exception:
+            print('@ly', i)
+            continue
 
     # eval on dev
     print("Evaluating on dev set...")
@@ -155,6 +163,5 @@ for epoch in range(1, opt['num_epoch'] + 1):
         model.update_lr(current_lr)
 
     dev_f1_history += [dev_f1]
-    print("")
 
 print("Training ended with {} epochs.".format(epoch))

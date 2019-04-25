@@ -84,7 +84,7 @@ class Vocab(object):
         return id2word, word2id
 
     def save(self, filename):
-        #assert not os.path.exists(filename), "Cannot save vocab: file exists at " + filename
+        # assert not os.path.exists(filename), "Cannot save vocab: file exists at " + filename
         if os.path.exists(filename):
             print("Overwriting old vocab file at " + filename)
             os.remove(filename)
@@ -96,7 +96,7 @@ class Vocab(object):
         """
         Map a list of tokens to their ids.
         """
-        return [self.word2id[w] if w in self.word2id else constant.VOCAB_UNK_ID for w in token_list]
+        return [self.word2id[w] if w in self.word2id else constant.UNK_ID for w in token_list]
 
     def unmap(self, idx_list):
         """
@@ -105,7 +105,7 @@ class Vocab(object):
         return [self.id2word[idx] for idx in idx_list]
 
     def get_embeddings(self, word_vectors=None, dim=100):
-        #self.embeddings = 2 * constant.EMB_INIT_RANGE * np.random.rand(self.size, dim) - constant.EMB_INIT_RANGE
+        # self.embeddings = 2 * constant.EMB_INIT_RANGE * np.random.rand(self.size, dim) - constant.EMB_INIT_RANGE
         self.embeddings = np.zeros((self.size, dim))
         if word_vectors is not None:
             assert len(list(word_vectors.values())[0]) == dim, \

@@ -7,7 +7,9 @@ import random
 import torch
 import numpy as np
 
-from utils import constant, helper, vocab
+from utils import constant
+# from utils import helper
+# from utils import vocab
 
 
 class DataLoader(object):
@@ -24,6 +26,9 @@ class DataLoader(object):
         with open(filename) as infile:
             data = json.load(infile)
         data = self.preprocess(data, vocab, opt)
+        # print('@ly Dataloader.preprocess(): len(data)=', len(data))
+        # print('@ly Dataloader.preprocess(): len(data[0])=', len(data[0]))       # 7
+
         # shuffle for training
         if not evaluation:
             indices = list(range(len(data)))
@@ -36,7 +41,8 @@ class DataLoader(object):
         # chunk into batches
         data = [data[i:i + batch_size] for i in range(0, len(data), batch_size)]
         self.data = data
-        print("{} batches created for {}".format(len(data), filename))
+        # print('@ly Dataloader.preprocess() chunks:  len(data[0][0]=', len(data[0][0]))
+        print("{} batches created for {}".format(len(data), filename))      # 7
 
     def preprocess(self, data, vocab, opt):
         """ Preprocess the data and convert to ids. """
@@ -48,17 +54,16 @@ class DataLoader(object):
             # anonymize tokens
             ss, se = d['subj_start'], d['subj_end']
             os, oe = d['obj_start'], d['obj_end']
-            tokens[ss:se + 1] = ['SUBJ-' + d['subj_type']] * (se - ss + 1)
+            tokens[ss:se + 1] = ['SUBJ-' + d['subj_type']] * (se - ss + 1)  # Entity Masking
             tokens[os:oe + 1] = ['OBJ-' + d['obj_type']] * (oe - os + 1)
             tokens = map_to_ids(tokens, vocab.word2id)
             pos = map_to_ids(d['stanford_pos'], constant.POS_TO_ID)
             ner = map_to_ids(d['stanford_ner'], constant.NER_TO_ID)
             deprel = map_to_ids(d['stanford_deprel'], constant.DEPREL_TO_ID)
-            l = len(tokens)
-            subj_positions = get_positions(d['subj_start'], d['subj_end'], l)
-            obj_positions = get_positions(d['obj_start'], d['obj_end'], l)
+            subj_positions = get_positions(d['subj_start'], d['subj_end'], len(tokens))
+            obj_positions = get_positions(d['obj_start'], d['obj_end'], len(tokens))
             relation = constant.LABEL_TO_ID[d['relation']]
-            processed += [(tokens, pos, ner, deprel, subj_positions, obj_positions, relation)]
+            processed += [(tokens, pos, ner, deprel, subj_positions, obj_positions, relation)]  # 7 elements in tuple
         return processed
 
     def gold(self):
@@ -101,9 +106,10 @@ class DataLoader(object):
 
         rels = torch.LongTensor(batch[6])
 
-        return (words, masks, pos, ner, deprel, subj_positions, obj_positions, rels, orig_idx)
+        return (words, masks, pos, ner, deprel, subj_positions, obj_positions, rels, orig_idx) #9
 
     def __iter__(self):
+        # print('@ly Dataloader.__iter__() executed!')
         for i in range(self.__len__()):
             yield self.__getitem__(i)
 
